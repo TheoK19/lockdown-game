@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LockDown — Cybersecurity Awareness Challenge</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --accent: #00e5ff;
+    --accent2: #ff3d6b;
+    --accent3: #7c3aed;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --text: #f0f4ff;
+    --text-muted: #6b7a99;
+    --border: rgba(0,229,255,0.12);
+    --glow: 0 0 24px rgba(0,229,255,0.25);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 60% 20%, rgba(124,58,237,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 20% 80%, rgba(0,229,255,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    text-align: center;
+    padding: 40px 0 32px;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+
+  .logo-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    background: linear-gradient(90deg, var(--accent), #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .tagline {
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn 0.4s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  /* ── START SCREEN ── */
+  .start-title {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .start-title span {
+    background: linear-gradient(90deg, var(--accent), #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .start-desc {
+    color: #94a3b8;
+    line-height: 1.7;
+    margin-bottom: 28px;
+    font-size: 15px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .info-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .info-item .num {
+    font-family: 'Space Mono', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+  }
+
+  .info-item .lbl {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  .threshold-note {
+    background: rgba(0,229,255,0.06);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 28px;
+    font-family: 'Space Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #38bdf8);
+    color: #0a0e1a;
+    width: 100%;
+    font-size: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 24px rgba(0,229,255,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,229,255,0.4);
+  }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .btn-secondary:hover { border-color: var(--accent); }
+
+  /* ── PROGRESS ── */
+  .progress-bar-wrap {
+    background: var(--surface2);
+    border-radius: 99px;
+    height: 6px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #a78bfa);
+    border-radius: 99px;
+    transition: width 0.5s ease;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 8px;
+  }
+
+  /* ── SCORE DISPLAY ── */
+  .score-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 6px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    float: right;
+  }
+
+  /* ── QUESTION CARD ── */
+  .category-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .badge-phishing  { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .badge-password  { background: rgba(124,58,237,0.15); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3); }
+  .badge-social    { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+  .badge-mfa       { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+  .badge-incident  { background: rgba(0,229,255,0.12);  color: #67e8f9; border: 1px solid rgba(0,229,255,0.25);}
+
+  .question-text {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .scenario-box {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent3);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: #cbd5e1;
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* ── OPTIONS ── */
+  .options { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+
+  .option-btn {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(0,229,255,0.05);
+    transform: translateX(4px);
+  }
+
+  .option-btn:disabled { cursor: default; }
+
+  .option-btn.correct {
+    border-color: var(--success);
+    background: rgba(16,185,129,0.1);
+  }
+
+  .option-btn.wrong {
+    border-color: var(--danger);
+    background: rgba(239,68,68,0.08);
+  }
+
+  .option-letter {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    background: var(--surface);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .option-btn.correct .option-letter { background: var(--success); color: #fff; }
+  .option-btn.wrong   .option-letter { background: var(--danger);  color: #fff; }
+
+  /* ── FEEDBACK ── */
+  .feedback-box {
+    margin-top: 16px;
+    border-radius: 12px;
+    padding: 16px 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    display: none;
+  }
+
+  .feedback-box.show { display: block; animation: fadeIn 0.3s ease; }
+  .feedback-box.correct-fb { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #a7f3d0; }
+  .feedback-box.wrong-fb   { background: rgba(239,68,68,0.08);  border: 1px solid rgba(239,68,68,0.25);  color: #fca5a5; }
+
+  .feedback-title {
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+  }
+
+  .next-btn-wrap { margin-top: 20px; display: none; }
+  .next-btn-wrap.show { display: block; }
+
+  /* ── RESULTS ── */
+  .results-score-ring {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 28px;
+    position: relative;
+  }
+
+  .ring-pass { background: conic-gradient(var(--success) 0%, var(--surface2) 0%); }
+  .ring-fail { background: conic-gradient(var(--danger) 0%, var(--surface2) 0%); }
+
+  .ring-inner {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ring-pct {
+    font-family: 'Space Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .ring-pct.pass { color: var(--success); }
+  .ring-pct.fail { color: var(--danger); }
+
+  .ring-label { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; }
+
+  .result-verdict {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .verdict-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .verdict-pass { color: var(--success); }
+  .verdict-fail { color: var(--danger); }
+
+  .verdict-sub { color: var(--text-muted); font-size: 15px; }
+
+  .results-breakdown {
+    background: var(--surface2);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .breakdown-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 16px;
+  }
+
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+
+  .breakdown-row:last-child { border-bottom: none; }
+
+  .breakdown-cat { color: #94a3b8; }
+  .breakdown-score { font-family: 'Space Mono', monospace; font-weight: 700; }
+  .score-good { color: var(--success); }
+  .score-mid  { color: var(--warning); }
+  .score-bad  { color: var(--danger); }
+
+  /* Missed questions */
+  .missed-section { margin-top: 20px; }
+
+  .missed-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 14px;
+  }
+
+  .missed-item {
+    background: var(--surface2);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+
+  .missed-q { color: #94a3b8; margin-bottom: 6px; line-height: 1.5; }
+  .missed-ans { color: var(--success); font-weight: 600; }
+
+  /* Confetti canvas */
+  #confetti-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* Mobile */
+  @media (max-width: 520px) {
+    .info-grid { grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .card { padding: 24px 18px; }
+    .question-text { font-size: 16px; }
+    .start-title { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas"></canvas>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">🔒</div>
+      <span class="logo-text">LOCKDOWN</span>
+    </div>
+    <div class="tagline">Cybersecurity Awareness Challenge</div>
+  </div>
+
+  <!-- START SCREEN -->
+  <div class="screen active" id="screen-start">
+    <div class="card">
+      <div class="start-title">Can you spot the <span>threat?</span></div>
+      <p class="start-desc">
+        Account compromise is the most common cause of business data breaches — and most of it starts with human error.
+        This challenge tests your ability to recognise phishing, protect your credentials, and respond correctly to real-world scenarios.
+      </p>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="num">10</span>
+          <span class="lbl">Questions</span>
+        </div>
+        <div class="info-item">
+          <span class="num">5</span>
+          <span class="lbl">Topics</span>
+        </div>
+        <div class="info-item">
+          <span class="num">80%</span>
+          <span class="lbl">To Pass</span>
+        </div>
+      </div>
+
+      <div class="threshold-note">
+        🎯 &nbsp;Pass threshold: 8/10 correct (80%). Score below this and you'll need to retake.
+      </div>
+
+      <button class="btn btn-primary" onclick="startGame()">
+        🚀 &nbsp; Start Challenge
+      </button>
+    </div>
+
+    <div style="font-size:12px; color: var(--text-muted); text-align:center; margin-top:12px; font-family:'Space Mono',monospace;">
+      LockDown · Staff Cybersecurity Awareness · v1.0
+    </div>
+  </div>
+
+  <!-- QUESTION SCREEN -->
+  <div class="screen" id="screen-question">
+    <div style="margin-bottom:16px; overflow:hidden;">
+      <span class="score-pill">⭐ Score: <span id="live-score">0</span></span>
+      <div style="clear:both;"></div>
+    </div>
+
+    <div class="progress-label">
+      <span id="q-counter">Question 1 of 10</span>
+      <span id="q-pct">0%</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+
+    <div class="card" id="question-card">
+      <div id="category-badge" class="category-badge"></div>
+      <div class="question-text" id="question-text"></div>
+      <div class="scenario-box" id="scenario-box" style="display:none;"></div>
+      <div class="options" id="options-container"></div>
+      <div class="feedback-box" id="feedback-box">
+        <div class="feedback-title" id="feedback-title"></div>
+        <div id="feedback-body"></div>
+      </div>
+      <div class="next-btn-wrap" id="next-btn-wrap">
+        <button class="btn btn-primary" onclick="nextQuestion()" id="next-btn">Next Question →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div class="screen" id="screen-results">
+    <div class="card">
+      <div class="results-score-ring" id="score-ring">
+        <div class="ring-inner">
+          <div class="ring-pct" id="ring-pct-text"></div>
+          <div class="ring-label">SCORE</div>
+        </div>
+      </div>
+
+      <div class="result-verdict">
+        <div class="verdict-title" id="verdict-title"></div>
+        <div class="verdict-sub" id="verdict-sub"></div>
+      </div>
+
+      <div class="results-breakdown">
+        <div class="breakdown-title">Performance by Topic</div>
+        <div id="breakdown-rows"></div>
+      </div>
+
+      <div class="missed-section" id="missed-section" style="display:none;">
+        <div class="missed-title">Review — Questions You Missed</div>
+        <div id="missed-list"></div>
+      </div>
+
+      <button class="btn btn-primary" onclick="restartGame()" style="margin-top:24px;">
+        🔄 &nbsp; Try Again
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── QUESTION BANK (40 questions, 10 randomly selected per game) ──
+const QUESTION_BANK = [
+
+  // PHISHING
+  { cat:'Phishing', badge:'badge-phishing',
+    q:"What is the most reliable way to verify that an email is genuinely from your bank?",
+    scenario: null,
+    opts:["Check that the email looks professional and uses your bank's logo",
+          "Contact your bank directly using a number from their official website",
+          "Reply to the email and ask them to confirm their identity",
+          "Check if the email was sent from a Gmail or Hotmail address"],
+    correct:1,
+    fb:"Always verify through an independent, trusted channel. The appearance of an email can be perfectly copied by attackers. Replying to the email just contacts the attacker. Use the number on your card or the bank's official website." },
+
+  { cat:'Phishing', badge:'badge-phishing',
+    q:"You receive the following email. What is the biggest red flag?",
+    scenario:'"URGENT: Your account has been suspended. Click here immediately to restore access: http://secure-bankk.com/restore"',
+    opts:["The email is written in capital letters",
+          "The word 'immediately' creates artificial urgency",
+          "The URL domain contains a misspelling ('bankk')",
+          "Both B and C are red flags"],
+    correct:3,
+    fb:"Correct — both are red flags. Artificial urgency is a psychological manipulation tactic designed to make you act before you think. Misspelled domains ('bankk' instead of 'bank') are a classic phishing technique. Always slow down and check both." },
+
+  { cat:'Phishing', badge:'badge-phishing',
+    q:"A colleague sends you a link in Microsoft Teams asking you to review a shared document. What should you do?",
+    scenario:'"Hey, can you check this doc I shared? Deadline is today. https://bit.ly/3xQdoc"',
+    opts:["Click the link — it came from a colleague you trust",
+          "Verify with your colleague via a different channel before clicking",
+          "Hover over the link to check the URL before clicking",
+          "Both B and C are good practice"],
+    correct:3,
+    fb:"Colleague accounts can be compromised. Shortened URLs (like bit.ly) hide the real destination. Best practice is to hover over the link AND confirm with your colleague through a separate channel such as a phone call or separate message." },
+
+  { cat:'Phishing', badge:'badge-phishing',
+    q:"Which of the following is a spear phishing attack?",
+    scenario: null,
+    opts:["A mass email sent to millions of addresses pretending to be a bank",
+          "A targeted email to a specific employee using their name, job title and manager's name",
+          "A text message claiming your parcel is waiting for delivery",
+          "A pop-up ad claiming your computer has a virus"],
+    correct:1,
+    fb:"Spear phishing is targeted — attackers research their victim first, using personal details to make the email seem credible. This makes it significantly harder to detect than generic phishing because it feels personalised and legitimate." },
+
+  { cat:'Phishing', badge:'badge-phishing',
+    q:"An email from 'IT Support' asks you to enter your password to verify your account. What do you do?",
+    scenario:'"Your account requires re-verification. Please enter your credentials at the link below within 24 hours or access will be revoked."',
+    opts:["Enter your credentials quickly to avoid losing access",
+          "Ignore it — IT will fix it without your help",
+          "Report it to IT and do not click any links",
+          "Forward it to a colleague to get a second opinion"],
+    correct:2,
+    fb:"Legitimate IT departments never ask for your password. This is a classic credential harvesting attack. Report it to your actual IT team using their known contact details — not by replying to the email — so they can investigate and warn others." },
+
+  { cat:'Phishing', badge:'badge-phishing',
+    q:"You receive an invoice by email from a supplier you work with regularly. It has a new bank account number. What do you do?",
+    scenario: null,
+    opts:["Process the payment — the email looks authentic",
+          "Call the supplier on their usual phone number to verify the change",
+          "Reply to the email to confirm before paying",
+          "Check the email address for typos before deciding"],
+    correct:1,
+    fb:"This is a Business Email Compromise (BEC) scam — one of the most costly cybercrimes. Attackers compromise or impersonate supplier emails and change payment details. Always call the supplier on a number you already have to verify any changes to payment details." },
+
+  { cat:'Phishing', badge:'badge-phishing',
+    q:"Which email address is most likely to be a phishing attempt?",
+    scenario: null,
+    opts:["support@microsoft.com",
+          "support@micros0ft-help.com",
+          "noreply@office365.com",
+          "security@microsoft.com"],
+    correct:1,
+    fb:"The zero ('0') replacing the letter 'o' in 'micros0ft' is a classic homograph attack. Combined with a suspicious domain ('-help.com'), this is clearly not a Microsoft address. Attackers rely on users reading too quickly to notice the substitution." },
+
+  { cat:'Phishing', badge:'badge-phishing',
+    q:"What does 'smishing' refer to?",
+    scenario: null,
+    opts:["Phishing conducted through social media platforms",
+          "Phishing conducted through SMS text messages",
+          "Phishing conducted by phone calls",
+          "Phishing conducted through fake websites"],
+    correct:1,
+    fb:"Smishing = SMS phishing. Vishing = voice/phone phishing. Social media phishing is sometimes called 'angler phishing'. Knowing the terminology helps you recognise and report the correct attack type to your security team." },
+
+  // PASSWORDS
+  { cat:'Password Security', badge:'badge-password',
+    q:"Which of the following is the strongest password?",
+    scenario: null,
+    opts:["Password123!",
+          "MyDog$Name1sMax",
+          "correct-horse-battery-staple-7",
+          "P@$$w0rd"],
+    correct:2,
+    fb:"A long passphrase of random words is significantly stronger than short complex passwords. Length beats complexity — 'correct-horse-battery-staple-7' is 30+ characters with a number, making it extremely resistant to brute force attacks while being memorable." },
+
+  { cat:'Password Security', badge:'badge-password',
+    q:"You need a new password for a work account. What is best practice?",
+    scenario: null,
+    opts:["Use a variation of your existing password so you don't forget it",
+          "Use the same strong password across all work accounts for consistency",
+          "Generate a unique random password and store it in a password manager",
+          "Use your name and a memorable number such as your birth year"],
+    correct:2,
+    fb:"A password manager generates and securely stores unique passwords for every account. If one account is breached, attackers cannot use the same credentials elsewhere — this is called 'credential stuffing' and it's extremely common." },
+
+  { cat:'Password Security', badge:'badge-password',
+    q:"Your organisation asks you to change your password every 90 days. You choose 'Summer2024!' then 'Autumn2024!'. What is wrong with this?",
+    scenario: null,
+    opts:["The passwords are too short",
+          "Predictable rotation patterns provide very little additional security",
+          "The passwords don't include numbers",
+          "Nothing is wrong — this is good practice"],
+    correct:1,
+    fb:"Password rotation policies can backfire when users create predictable patterns. Attackers know about seasonal password patterns and test for them. NCSC guidance now recommends against forced regular rotation unless there's evidence of compromise, in favour of using longer, unique passwords." },
+
+  { cat:'Password Security', badge:'badge-password',
+    q:"A colleague tells you their password so you can cover for them while they're on holiday. What should you do?",
+    scenario: null,
+    opts:["Write it down somewhere safe and delete it when they return",
+          "Remember it mentally and don't share it further",
+          "Decline — account sharing violates security policy and creates accountability issues",
+          "Accept but report it to IT after they return"],
+    correct:2,
+    fb:"Sharing credentials removes individual accountability — you can no longer trace who did what. If something goes wrong while you're logged in as them, there is no audit trail. The right solution is to ask IT for appropriate delegated access." },
+
+  { cat:'Password Security', badge:'badge-password',
+    q:"What is credential stuffing?",
+    scenario: null,
+    opts:["Using a list of previously breached username/password combinations to try to log into other services",
+          "Sending phishing emails that contain fake login pages",
+          "Installing keylogger software to capture passwords as they are typed",
+          "Guessing passwords using common word lists"],
+    correct:0,
+    fb:"Credential stuffing exploits password reuse. When a database is breached, attackers take those credentials and automatically test them across hundreds of other services. This is why unique passwords for every account are critical — if one is breached, others remain safe." },
+
+  // SOCIAL ENGINEERING
+  { cat:'Social Engineering', badge:'badge-social',
+    q:"Someone calls claiming to be from IT Support and asks for your login credentials to fix an urgent problem. What do you do?",
+    scenario: null,
+    opts:["Provide them — IT needs access to help you",
+          "Ask for their employee ID and call the IT helpdesk back on the official number to verify",
+          "Ask them to email you instead",
+          "Provide your username but not your password"],
+    correct:1,
+    fb:"This is vishing (voice phishing). Legitimate IT support will never ask for your password. Hang up and call IT on their official number — found on the company intranet, not one the caller gives you. Verifying through a separate channel breaks the attacker's social engineering chain." },
+
+  { cat:'Social Engineering', badge:'badge-social',
+    q:"A person in business attire follows closely behind you through a secure door without scanning their badge. What should you do?",
+    scenario: null,
+    opts:["Let them in — they look like they work there",
+          "Politely ask them to scan their own badge or contact reception",
+          "Ignore it — challenging people is rude",
+          "Report it after the fact to your manager"],
+    correct:1,
+    fb:"This is tailgating or piggybacking — a classic physical social engineering tactic. Professional appearance does not equal authorisation. Politely challenging unauthorised access is not rude — it's a security responsibility. In high-security environments it should be done regardless of who the person appears to be." },
+
+  { cat:'Social Engineering', badge:'badge-social',
+    q:"You find a USB drive in the car park with a label that says 'Payroll Q4 2024'. What do you do?",
+    scenario: null,
+    opts:["Plug it into your computer to see whose it is so you can return it",
+          "Leave it where you found it",
+          "Hand it to IT security without plugging it in",
+          "Plug it in on a personal device to keep work systems safe"],
+    correct:2,
+    fb:"'Baiting' with USB drives is a documented attack technique. Attackers deliberately leave infected USB drives in car parks knowing curiosity will win. Plugging one in on any device — work or personal — can install malware. Hand it to IT unopened." },
+
+  { cat:'Social Engineering', badge:'badge-social',
+    q:"An attacker researches a target's social media to find the names of their colleagues, manager and current projects before calling them. What is this called?",
+    scenario: null,
+    opts:["Vishing",
+          "Pretexting",
+          "OSINT-enabled social engineering",
+          "Spear phishing"],
+    correct:2,
+    fb:"Open Source Intelligence (OSINT) gathering uses publicly available information — LinkedIn, Twitter/X, company websites — to build a convincing pretext before an attack. This is why oversharing on social media (names of colleagues, project names, office locations) creates real security risk." },
+
+  { cat:'Social Engineering', badge:'badge-social',
+    q:"A senior manager emails you asking you to urgently transfer £5,000 to a new supplier. They say they're in a meeting and can't talk. What do you do?",
+    scenario:'"Please action this immediately — I\'ll explain later. Don\'t contact me by phone as I\'m in back-to-back meetings all day."',
+    opts:["Transfer the funds — the manager asked urgently",
+          "Wait until the manager is available to confirm in person",
+          "Verify by contacting the manager through a separate, known channel",
+          "Reply to the email asking for more details"],
+    correct:2,
+    fb:"This is a CEO/Executive impersonation fraud. The instruction to avoid phone contact is a control tactic — it prevents you from verifying through a channel the attacker doesn't control. Always verify financial requests through a known, independent channel regardless of apparent seniority." },
+
+  // MFA
+  { cat:'Multi-Factor Authentication', badge:'badge-mfa',
+    q:"What does Multi-Factor Authentication (MFA) protect against most effectively?",
+    scenario: null,
+    opts:["Malware installed on your device",
+          "Compromised passwords being used to log in from an unknown device",
+          "Phishing emails reaching your inbox",
+          "Data being intercepted on a public Wi-Fi network"],
+    correct:1,
+    fb:"MFA's primary protection is against credential theft. Even if an attacker has your password, they cannot log in without the second factor. It does not protect against malware, phishing delivery, or network interception — but it dramatically reduces the impact of a stolen password." },
+
+  { cat:'Multi-Factor Authentication', badge:'badge-mfa',
+    q:"You receive an unexpected MFA push notification on your phone while you're not trying to log in. What does this mean?",
+    scenario: null,
+    opts:["It's a glitch — approve it to clear the notification",
+          "Someone has your password and is attempting to log in as you",
+          "Your phone's time settings are incorrect",
+          "Your account is being upgraded automatically"],
+    correct:1,
+    fb:"An unexpected MFA prompt means someone has your password and is actively attempting to access your account. Do not approve it. Report it to IT immediately and change your password. This is called an MFA fatigue or MFA push bombing attack if they send multiple prompts hoping you'll approve one." },
+
+  { cat:'Multi-Factor Authentication', badge:'badge-mfa',
+    q:"Which MFA method is considered most secure?",
+    scenario: null,
+    opts:["SMS one-time code sent to your phone",
+          "Email one-time code",
+          "An authenticator app (e.g. Microsoft Authenticator)",
+          "A physical hardware security key (e.g. YubiKey)"],
+    correct:3,
+    fb:"Hardware security keys are the most secure — they cannot be phished remotely and require physical presence. Authenticator apps are a strong second. SMS codes are the weakest form of MFA because phone numbers can be SIM-swapped by attackers who convince your mobile carrier to transfer your number." },
+
+  { cat:'Multi-Factor Authentication', badge:'badge-mfa',
+    q:"Your company switches from password-only login to MFA. A colleague complains it's inconvenient and asks IT to disable it for their account. Why is this a security risk?",
+    scenario: null,
+    opts:["It isn't — one account without MFA doesn't affect others",
+          "Attackers specifically target accounts without MFA as the weakest entry point",
+          "It breaks company policy but has no real security impact",
+          "MFA is only necessary for senior staff"],
+    correct:1,
+    fb:"One unprotected account can compromise an entire organisation. Attackers scan for accounts without MFA and use them as entry points. From there, they can move laterally across the network. Security controls are only as strong as their weakest link." },
+
+  { cat:'Multi-Factor Authentication', badge:'badge-mfa',
+    q:"What is an MFA fatigue attack?",
+    scenario: null,
+    opts:["An attack that cracks MFA codes using brute force",
+          "Sending repeated MFA push notifications hoping the user approves one out of frustration",
+          "Installing malware that disables MFA on a device",
+          "Intercepting MFA codes sent by SMS"],
+    correct:1,
+    fb:"MFA fatigue (or push bombing) is a real and increasingly common attack. Attackers with stolen credentials send dozens of MFA approval requests hoping the user eventually approves one to stop the notifications. Some high-profile breaches including Uber's 2022 breach involved this technique." },
+
+  // INCIDENT RESPONSE
+  { cat:'Incident Response', badge:'badge-incident',
+    q:"You notice your computer is running unusually slowly and your mouse is moving on its own. What should you do?",
+    scenario: null,
+    opts:["Restart the computer and continue working",
+          "Run a quick antivirus scan before continuing",
+          "Disconnect from the network and report to IT immediately",
+          "Save all your work and shut down"],
+    correct:2,
+    fb:"Disconnecting from the network immediately limits the attacker's ability to exfiltrate data or spread to other systems. Restarting or running antivirus while connected may alert the attacker or give them time to cover their tracks. Report to IT before taking other actions so they can guide you correctly." },
+
+  { cat:'Incident Response', badge:'badge-incident',
+    q:"You accidentally click a phishing link at work. What is the correct order of actions?",
+    scenario: null,
+    opts:["Delete the email, clear your browser history, and carry on",
+          "Disconnect from the network, report to IT immediately, don't touch the device",
+          "Run antivirus, change your password, and monitor for unusual activity",
+          "Tell a colleague and wait to see if anything happens"],
+    correct:1,
+    fb:"Speed matters in incident response. Disconnect first to limit spread. Report immediately so IT can assess the damage and take action. Don't try to fix it yourself — IT needs to forensically examine the device in its current state. Deleting the email or browsing history destroys evidence." },
+
+  { cat:'Incident Response', badge:'badge-incident',
+    q:"Under GDPR, your organisation must report a personal data breach to the ICO within how many hours of becoming aware of it?",
+    scenario: null,
+    opts:["24 hours",
+          "48 hours",
+          "72 hours",
+          "7 days"],
+    correct:2,
+    fb:"GDPR requires notification to the relevant supervisory authority (the ICO in the UK) within 72 hours of becoming aware of a breach, where the breach is likely to result in a risk to individuals' rights and freedoms. This makes rapid internal reporting essential — IT cannot report to the ICO if they don't know." },
+
+  { cat:'Incident Response', badge:'badge-incident',
+    q:"You believe a colleague may be deliberately leaking sensitive company data. What should you do?",
+    scenario: null,
+    opts:["Confront the colleague directly",
+          "Check their email yourself to gather evidence",
+          "Report your concern to your manager or the security/HR team through the correct channel",
+          "Say nothing unless you're certain"],
+    correct:2,
+    fb:"Insider threats require careful handling. Confronting the person directly may alert them to cover their tracks. Accessing their email without authorisation may itself be illegal and would contaminate any investigation. Use the correct reporting channel — most organisations have a confidential reporting mechanism." },
+
+  { cat:'Incident Response', badge:'badge-incident',
+    q:"Your laptop is stolen from your car. What is the most important first action?",
+    scenario: null,
+    opts:["Report it to the police",
+          "Report it to IT immediately so credentials can be revoked",
+          "Check whether it had full-disk encryption enabled",
+          "Inform your manager"],
+    correct:1,
+    fb:"Reporting to IT is the most time-critical action because they can remotely wipe the device, revoke credentials, and lock accounts before an attacker can use them. The laptop itself may be replaceable — the data and credentials on it are not. Police reporting is also important but is less time-sensitive from a security perspective." },
+
+  // BONUS: GENERAL
+  { cat:'Phishing', badge:'badge-phishing',
+    q:"What makes HTTPS in a website address a reliable indicator of a safe website?",
+    scenario: null,
+    opts:["It confirms the website is legitimate and trustworthy",
+          "It only confirms the connection is encrypted, not that the site is genuine",
+          "It means the site has been verified by the government",
+          "It prevents malware from being downloaded from the site"],
+    correct:1,
+    fb:"HTTPS means the connection between your browser and the server is encrypted — that's all. Phishing sites routinely use HTTPS and get free SSL certificates. A padlock icon does NOT mean the site is legitimate. Always check the full domain name carefully." },
+
+  { cat:'Password Security', badge:'badge-password',
+    q:"You receive a notification that your email address appeared in a data breach on a third-party website. What should you do?",
+    scenario: null,
+    opts:["Ignore it if you don't use that website for anything important",
+          "Change only the password for that website",
+          "Change the password for that site and any other account using the same password",
+          "Delete your account on that website"],
+    correct:2,
+    fb:"The risk in a breach extends beyond the breached site. If you reused that password elsewhere, attackers will try it on other services immediately (credential stuffing). Change all accounts sharing that password. Tools like Have I Been Pwned (haveibeenpwned.com) help you check which services have been compromised." },
+
+  { cat:'Social Engineering', badge:'badge-social',
+    q:"Which of the following best describes 'pretexting'?",
+    scenario: null,
+    opts:["Sending a fake email designed to look like it's from a trusted organisation",
+          "Creating a fabricated scenario to manipulate someone into revealing information or taking an action",
+          "Installing spyware to monitor a target's activity",
+          "Using fake caller ID to impersonate a trusted phone number"],
+    correct:1,
+    fb:"Pretexting is the foundation of most social engineering attacks. The attacker invents a plausible scenario — 'I'm from IT', 'I'm your new manager', 'I'm a supplier' — to establish credibility before making their request. Awareness of pretexting makes you ask: 'Is this scenario being used to pressure me into something?'" },
+
+  { cat:'Multi-Factor Authentication', badge:'badge-mfa',
+    q:"Is it safe to use the same authenticator app code for two different logins within 30 seconds of each other?",
+    scenario: null,
+    opts:["Yes — codes are valid for 30 seconds",
+          "No — authenticator codes are one-time use per account and rotate every 30 seconds",
+          "Yes — as long as the accounts have different usernames",
+          "No — you should wait 60 seconds between logins"],
+    correct:1,
+    fb:"Each account in an authenticator app generates its own independent time-based code (TOTP). The codes for Account A and Account B are completely separate — using one does not affect the other. The 30-second window means the code is valid during that period, not that it can only be used once globally." },
+
+  { cat:'Incident Response', badge:'badge-incident',
+    q:"What is the purpose of a 'clean desk policy'?",
+    scenario: null,
+    opts:["To maintain office hygiene and professional appearance",
+          "To reduce the risk of sensitive information being seen or taken by unauthorised individuals",
+          "To comply with health and safety regulations",
+          "To prevent equipment theft"],
+    correct:1,
+    fb:"A clean desk policy is a physical security control. Confidential documents, passwords written on sticky notes, and unlocked screens are all exploitable by anyone with physical access — cleaners, visitors, delivery personnel, or other staff. It directly reduces the risk of physical information disclosure." },
+
+  { cat:'Phishing', badge:'badge-phishing',
+    q:"What is 'whaling'?",
+    scenario: null,
+    opts:["A phishing attack targeting large numbers of users at once",
+          "A targeted phishing attack specifically aimed at senior executives",
+          "A phishing attack conducted via WhatsApp",
+          "A phishing attack that uses whale-themed decoys"],
+    correct:1,
+    fb:"Whaling targets high-value individuals — CEOs, CFOs, board members — because they have access to financial systems, strategic data, and can authorise large transactions. These attacks are highly researched and personalised. The 2016 Bangladesh Bank heist, which resulted in $81 million being stolen, began with a whaling attack." },
+
+  { cat:'Password Security', badge:'badge-password',
+    q:"A website stores passwords in 'plaintext'. What does this mean and why is it dangerous?",
+    scenario: null,
+    opts:["Passwords are stored in a readable format — if the database is breached, all passwords are immediately exposed",
+          "Passwords are stored using weak encryption that can be easily reversed",
+          "Passwords are stored without a username — making them harder to use",
+          "Passwords are stored in a format only readable by the system administrator"],
+    correct:0,
+    fb:"Plaintext storage means passwords are saved exactly as you type them — no encryption or hashing. If that database is breached, every single password is immediately readable. Good practice is to hash passwords using algorithms like bcrypt. This is why using unique passwords everywhere matters — a plaintext breach on one site exposes your password for everywhere you reused it." },
+
+  { cat:'Social Engineering', badge:'badge-social',
+    q:"You receive a LinkedIn message from someone claiming to be a cybersecurity recruiter. They ask for your work email and which security software your company uses. What do you do?",
+    scenario: null,
+    opts:["Provide the information — it's just a recruiter",
+          "Ignore it entirely",
+          "Decline to share internal systems information and verify the recruiter's identity independently",
+          "Ask a colleague whether to respond"],
+    correct:2,
+    fb:"Attackers use professional platforms like LinkedIn to gather intelligence (OSINT) about target organisations. Your work email can be used for phishing. Knowledge of which security software you use helps attackers identify exploitable gaps. Legitimate recruiters don't need to know your internal security stack." },
+
+  { cat:'Incident Response', badge:'badge-incident',
+    q:"What should you do if you receive a ransom note on your computer screen demanding cryptocurrency in exchange for your files?",
+    scenario:'"Your files have been encrypted. Pay 0.5 Bitcoin to [address] within 48 hours or your data will be permanently deleted."',
+    opts:["Pay the ransom immediately to recover your files before the deadline",
+          "Disconnect from the network immediately and report to IT without paying",
+          "Try to decrypt the files yourself using online tools",
+          "Restart the computer to see if it clears"],
+    correct:1,
+    fb:"Never pay the ransom — it funds criminal organisations, does not guarantee recovery, and marks you as a target for future attacks. Disconnect immediately to prevent spread across the network. IT will assess whether backups can be used for recovery. Paying is a last resort decision made by senior management, not individual employees." },
+
+  { cat:'Multi-Factor Authentication', badge:'badge-mfa',
+    q:"You're working remotely and need to access company systems via a public Wi-Fi network. What should you do?",
+    scenario: null,
+    opts:["Proceed normally — HTTPS sites are safe on any network",
+          "Use the company VPN before accessing any work systems",
+          "Use your phone's mobile data instead of Wi-Fi",
+          "Both B and C are appropriate precautions"],
+    correct:3,
+    fb:"Public Wi-Fi networks can be monitored or spoofed. A VPN encrypts your traffic so even if the network is compromised, your data is protected. Using mobile data avoids the public network entirely. Both are valid approaches — using the VPN on mobile data provides the strongest protection." },
+
+  { cat:'Phishing', badge:'badge-phishing',
+    q:"What is the difference between phishing and pharming?",
+    scenario: null,
+    opts:["Phishing uses fake emails; pharming redirects legitimate website traffic to a fake site",
+          "Phishing targets individuals; pharming targets large organisations",
+          "Phishing is illegal; pharming is a legal grey area",
+          "There is no meaningful difference — they are the same attack"],
+    correct:0,
+    fb:"Phishing tricks you into visiting a fake site by clicking a malicious link. Pharming is more sophisticated — it corrupts DNS settings so that even typing the correct URL into your browser takes you to a fake site. Pharming is harder to detect because the URL appears correct. Both result in credential theft." }
+];
+
+const PASS_THRESHOLD = 0.8;
+const QUESTIONS_PER_GAME = 10;
+
+let questions = [];
+let current = 0;
+let score = 0;
+let answers = [];
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function startGame() {
+  questions = shuffle([...QUESTION_BANK]).slice(0, QUESTIONS_PER_GAME);
+  current = 0; score = 0; answers = [];
+  showScreen('screen-question');
+  renderQuestion();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  const pct = Math.round((current / QUESTIONS_PER_GAME) * 100);
+
+  document.getElementById('q-counter').textContent = `Question ${current + 1} of ${QUESTIONS_PER_GAME}`;
+  document.getElementById('q-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('live-score').textContent = score;
+
+  const badge = document.getElementById('category-badge');
+  badge.textContent = q.cat;
+  badge.className = 'category-badge ' + q.badge;
+
+  document.getElementById('question-text').textContent = q.q;
+
+  const sb = document.getElementById('scenario-box');
+  if (q.scenario) { sb.style.display = 'block'; sb.textContent = q.scenario; }
+  else { sb.style.display = 'none'; }
+
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  fb.style.display = 'none';
+
+  const nbw = document.getElementById('next-btn-wrap');
+  nbw.classList.remove('show');
+
+  const opts = document.getElementById('options-container');
+  opts.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    opts.appendChild(btn);
+  });
+}
+
+function selectAnswer(idx) {
+  const q = questions[current];
+  const isCorrect = idx === q.correct;
+  if (isCorrect) score++;
+
+  answers.push({ q, chosen: idx, correct: isCorrect });
+
+  // Disable all options
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === idx && !isCorrect) btn.classList.add('wrong');
+  });
+
+  // Feedback
+  const fb = document.getElementById('feedback-box');
+  const ft = document.getElementById('feedback-title');
+  const fBody = document.getElementById('feedback-body');
+
+  if (isCorrect) {
+    fb.className = 'feedback-box correct-fb show';
+    ft.innerHTML = '✅ Correct!';
+  } else {
+    fb.className = 'feedback-box wrong-fb show';
+    ft.innerHTML = '❌ Incorrect';
+  }
+  fBody.textContent = q.fb;
+  fb.style.display = 'block';
+
+  document.getElementById('live-score').textContent = score;
+
+  const nbw = document.getElementById('next-btn-wrap');
+  const nb = document.getElementById('next-btn');
+  nbw.classList.add('show');
+  nb.textContent = current + 1 < QUESTIONS_PER_GAME ? 'Next Question →' : 'See Results →';
+}
+
+function nextQuestion() {
+  current++;
+  if (current < QUESTIONS_PER_GAME) {
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  showScreen('screen-results');
+  const pct = Math.round((score / QUESTIONS_PER_GAME) * 100);
+  const passed = score / QUESTIONS_PER_GAME >= PASS_THRESHOLD;
+
+  // Ring
+  const ring = document.getElementById('score-ring');
+  const deg = Math.round((score / QUESTIONS_PER_GAME) * 360);
+  const colour = passed ? 'var(--success)' : 'var(--danger)';
+  ring.style.background = `conic-gradient(${colour} ${deg}deg, var(--surface2) ${deg}deg)`;
+
+  const rpt = document.getElementById('ring-pct-text');
+  rpt.textContent = pct + '%';
+  rpt.className = 'ring-pct ' + (passed ? 'pass' : 'fail');
+
+  // Verdict
+  document.getElementById('verdict-title').innerHTML =
+    passed
+      ? `<span class="verdict-pass">✅ Challenge Passed!</span>`
+      : `<span class="verdict-fail">❌ Not Quite — Try Again</span>`;
+
+  document.getElementById('verdict-sub').textContent =
+    passed
+      ? `You scored ${score}/${QUESTIONS_PER_GAME}. Great work — your cybersecurity awareness is strong.`
+      : `You scored ${score}/${QUESTIONS_PER_GAME}. You need 8/10 to pass. Review the feedback below and try again.`;
+
+  // Breakdown by category
+  const cats = {};
+  answers.forEach(a => {
+    const c = a.q.cat;
+    if (!cats[c]) cats[c] = { total: 0, correct: 0 };
+    cats[c].total++;
+    if (a.correct) cats[c].correct++;
+  });
+
+  const br = document.getElementById('breakdown-rows');
+  br.innerHTML = '';
+  Object.entries(cats).forEach(([cat, data]) => {
+    const p = Math.round((data.correct / data.total) * 100);
+    const cls = p >= 80 ? 'score-good' : p >= 50 ? 'score-mid' : 'score-bad';
+    br.innerHTML += `
+      <div class="breakdown-row">
+        <span class="breakdown-cat">${cat}</span>
+        <span class="breakdown-score ${cls}">${data.correct}/${data.total} (${p}%)</span>
+      </div>`;
+  });
+
+  // Missed questions
+  const missed = answers.filter(a => !a.correct);
+  const ms = document.getElementById('missed-section');
+  const ml = document.getElementById('missed-list');
+  if (missed.length > 0) {
+    ms.style.display = 'block';
+    ml.innerHTML = '';
+    missed.forEach(a => {
+      ml.innerHTML += `
+        <div class="missed-item">
+          <div class="missed-q">${a.q.q}</div>
+          <div class="missed-ans">✅ Correct answer: ${a.q.opts[a.q.correct]}</div>
+        </div>`;
+    });
+  } else {
+    ms.style.display = 'none';
+  }
+
+  if (passed) launchConfetti();
+}
+
+function restartGame() {
+  startGame();
+}
+
+// Confetti
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const pieces = Array.from({ length: 120 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height - canvas.height,
+    r: Math.random() * 8 + 4,
+    d: Math.random() * 3 + 1,
+    color: ['#00e5ff','#7c3aed','#10b981','#f59e0b','#ff3d6b'][Math.floor(Math.random()*5)],
+    tilt: Math.random() * 10 - 10,
+    tiltAngle: 0,
+    tiltSpeed: Math.random() * 0.1 + 0.05
+  }));
+
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      ctx.beginPath();
+      ctx.lineWidth = p.r / 2;
+      ctx.strokeStyle = p.color;
+      ctx.moveTo(p.x + p.tilt + p.r / 4, p.y);
+      ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 4);
+      ctx.stroke();
+      p.tiltAngle += p.tiltSpeed;
+      p.y += (Math.cos(frame / 10 + p.d) + p.d + p.r / 10) * 0.8;
+      p.tilt = Math.sin(p.tiltAngle) * 12;
+      if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
+    });
+    frame++;
+    if (frame < 300) requestAnimationFrame(draw);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  draw();
+}
+</script>
+</body>
+</html>
